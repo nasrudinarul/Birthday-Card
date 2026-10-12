@@ -2,15 +2,16 @@ let audioCtx;
 let isAudioPlaying = false;
 let isCandleLit = true;
 
-// Mengambil foto dari folder lokal "foto-foto"
+// Daftar foto di luar folder (root direktori)[span_1](start_span)[span_1](end_span)
 const photos = [
-    'foto-foto/foto1.jpeg',
-    'foto-foto/foto2.jpeg',
-    'foto-foto/foto3.jpeg',
-    'foto-foto/foto4.jpeg',
-    'foto-foto/foto5.jpeg'
+    'foto1.jpeg',
+    'foto2.jpeg',
+    'foto3.jpeg',
+    'foto4.jpeg',
+    'foto5.jpeg'
 ];
 let currentPhotoIndex = 0;
+let slideInterval;
 
 function initAudio() {
     if (!audioCtx) {
@@ -88,17 +89,33 @@ function openCard() {
         splash.style.display = 'none';
         main.classList.remove('opacity-0');
     }, 700);
+
+    // Mulai slideshow otomatis berganti foto setiap 4 detik
+    startAutoSlide();
 }
 
-function changePhoto(direction) {
-    playPopSound();
-    currentPhotoIndex = (currentPhotoIndex + direction + photos.length) % photos.length;
+function updatePhoto() {
     const img = document.getElementById('profilePhoto');
+    if (!img) return;
     img.style.opacity = 0;
     setTimeout(() => {
         img.src = photos[currentPhotoIndex];
         img.style.opacity = 1;
     }, 200);
+}
+
+function changePhoto(direction) {
+    playPopSound();
+    currentPhotoIndex = (currentPhotoIndex + direction + photos.length) % photos.length;
+    updatePhoto();
+}
+
+function startAutoSlide() {
+    if (slideInterval) clearInterval(slideInterval);
+    slideInterval = setInterval(() => {
+        currentPhotoIndex = (currentPhotoIndex + 1) % photos.length;
+        updatePhoto();
+    }, 4000);
 }
 
 function blowCandles() {
@@ -125,12 +142,6 @@ function triggerConfetti() {
             colors: ['#ff69b4', '#ff1493', '#f43f5e', '#ffb6c1']
         });
     }
-}
-
-function claimCoupon(title) {
-    playPopSound();
-    triggerConfetti();
-    alert(`🎉 Berhasil Klaim! "${title}" telah disimpan. Tunjukkan kupon ini ke aku ya! ❤️`);
 }
 
 function initHeartCanvas() {
@@ -183,3 +194,4 @@ function initHeartCanvas() {
 window.onload = function() {
     initHeartCanvas();
 };
+            
